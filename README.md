@@ -17,7 +17,7 @@ Ce dossier contient tous les outils et scripts permettant à l'agent Antigravity
 
 ## 1. Utiliser directement la nouvelle commande `agy-auto`
 
-Un alias global a été installé dans votre dossier PATH (`C:\Users\Louis\AppData\Local\agy\bin`).
+Un alias global a été installé dans votre dossier PATH (`C:\Users\X\AppData\Local\agy\bin`).
 
 Désormais, depuis **n'importe quel terminal** (PowerShell, CMD, Windows Terminal) :
 
