@@ -1,0 +1,31 @@
+name: CI Validation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Test shell scripts syntax
+        run: |
+          bash -n install.sh
+          bash -n setup_linux.sh
+          bash -n lancer_agy_sans_permissions.sh
+          bash -n lancer_auto_enter_cli.sh
+
+      - name: Test Python scripts syntax
+        run: |
+          python3 -m py_compile auto_enter_cli.py
+          python3 -m py_compile auto_enter_app.py

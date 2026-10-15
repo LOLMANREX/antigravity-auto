@@ -1,0 +1,94 @@
+name: Build and Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Nom du tag de version (ex: v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate scripts syntax
+        run: |
+          python3 -m py_compile auto_enter_cli.py auto_enter_app.py
+          bash -n install.sh
+          bash -n setup_linux.sh
+          bash -n lancer_agy_sans_permissions.sh
+          bash -n lancer_auto_enter_cli.sh
+
+      - name: Create release archives
+        run: |
+          mkdir -p dist
+          # Archive Windows
+          zip -r dist/antigravity-auto-windows.zip Setup.exe Setup_Windows.bat auto_enter_app.py auto_enter_cli.py Lancer_*.bat README.md
+          # Archive Linux
+          tar -czvf dist/antigravity-auto-linux.tar.gz install.sh setup_linux.sh auto_enter_cli.py auto_enter_app.py lancer_*.sh README.md
+          # Copie de Setup.exe et install.sh
+          cp Setup.exe dist/Setup.exe
+          cp install.sh dist/install.sh
+          # Checksums SHA256
+          cd dist
+          sha256sum * > SHA256SUMS.txt
+          cd ..
+
+      - name: Determine tag name
+        id: get_tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "TAG_NAME=${{ github.event.inputs.tag_name }}" >> $GITHUB_ENV
+          else
+            echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          name: Antigravity Auto ${{ env.TAG_NAME }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            dist/Setup.exe
+            dist/install.sh
+            dist/antigravity-auto-windows.zip
+            dist/antigravity-auto-linux.tar.gz
+            dist/SHA256SUMS.txt
+          body: |
+            ## 🚀 Antigravity Auto - ${{ env.TAG_NAME }}
+
+            Automatisation complète d'Antigravity CLI (`agy`) pour Linux et Windows.
+
+            ### 🐧 Installation Linux (en 1 seule ligne) :
+            ```bash
+            curl -fsSL https://raw.githubusercontent.com/LOLMANREX/antigravity-auto/main/install.sh | bash
+            ```
+
+            ### 🪟 Installation Windows (sans commande) :
+            - Téléchargez **`Setup.exe`** ci-dessous et double-cliquez dessus.
+            - Ou téléchargez **`antigravity-auto-windows.zip`** et lancez **`Setup_Windows.bat`**.
+
+            ### 📦 Fichiers téléchargeables :
+            - **`Setup.exe`** : Installateur graphique natif autonome pour Windows
+            - **`install.sh`** : Script d'installation universel pour Linux
+            - **`antigravity-auto-windows.zip`** : Package complet zippé pour Windows
+            - **`antigravity-auto-linux.tar.gz`** : Package complet pour Linux
+            - **`SHA256SUMS.txt`** : Empreintes de contrôle de sécurité
