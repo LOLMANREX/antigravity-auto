@@ -35,20 +35,22 @@ else:
     user32 = None
 
 
-def press_enter_key():
+def press_enter_key() -> bool:
     if IS_WINDOWS:
         user32.keybd_event(VK_RETURN, 0, 0, 0)
         time.sleep(0.04)
         user32.keybd_event(VK_RETURN, 0, KEYEVENTF_KEYUP, 0)
+        return True
     else:
         # Linux implementation: xdotool (X11) or ydotool (Wayland)
         if shutil.which("xdotool"):
             subprocess.run(["xdotool", "key", "Return"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return True
         elif shutil.which("ydotool"):
             subprocess.run(["ydotool", "key", "28:1", "28:0"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return True
         else:
-            # Fallback note for Linux CLI environments
-            pass
+            return False
 
 
 def get_foreground_window_title() -> str:
@@ -100,10 +102,11 @@ def main():
         print(" * Raccourci      : [F8] pour Mettre en pause / Reprendre")
     print(" * Arrêt          : [Ctrl + C]")
     if not IS_WINDOWS and not shutil.which("xdotool") and not shutil.which("ydotool"):
-        print("\n [INFO] Sur Linux en ligne de commande pure, la méthode recommandée")
-        print("        et la plus fiable est d'utiliser directement :")
-        print("        $ agy-auto")
-        print("        (ou 'agy --dangerously-skip-permissions')")
+        print("\n [ATTENTION] Ni 'xdotool' (pour X11) ni 'ydotool' (pour Wayland) n'est installé.")
+        print("             Pour simuler des frappes clavier : sudo apt install -y xdotool")
+        print("\n             Astuce : La méthode recommandée et native sous Linux est simplement :")
+        print("             $ agy-auto")
+        print("             (Auto-approbation native, aucun outil externe requis)")
         print("=" * 60)
 
     if args.delay > 0:
@@ -139,11 +142,12 @@ def main():
                         should_press = True
 
                 if should_press:
-                    press_enter_key()
+                    sent = press_enter_key()
                     count += 1
                     short_title = (active_title[:30] + "..") if len(active_title) > 32 else active_title
                     timestamp = time.strftime("%H:%M:%S")
-                    print(f"[{timestamp}] [#{count}] [Entrée envoyée] -> '{short_title}'")
+                    status_text = "[Entrée envoyée]" if sent else "[Simulation ignorée: installez xdotool]"
+                    print(f"[{timestamp}] [#{count}] {status_text} -> '{short_title}'")
 
                     if args.count > 0 and count >= args.count:
                         print(f"\nLimite atteinte ({count} appuis). Fin.")

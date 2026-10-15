@@ -1,87 +1,96 @@
 # Antigravity CLI - Automatisation Totale des Permissions & Touche Entrée
 
-Ce dossier contient tous les outils et scripts permettant à l'agent Antigravity CLI (`agy`) d'exécuter l'ensemble de ses commandes et outils **sans demander de permission manuelle** ou en **validant automatiquement par la touche Entrée**. Compatible **Linux** et **Windows**.
+Ce projet permet à l'agent Antigravity CLI (`agy`) d'exécuter l'ensemble de ses outils et commandes **sans demander de validation manuelle** ou en **validant automatiquement par la touche Entrée**. Compatible **Linux** et **Windows**.
 
 ---
 
-## 🚀 Résumé des solutions disponibles
+## ⚡ Installation Rapide sur Linux
 
-| Solution | Méthode | Linux | Windows |
-| :--- | :--- | :--- | :--- |
-| **1. Commande directe globale** | Commande `agy-auto` / `agy-yolo` | `~/.local/bin/agy-auto` ou alias bash | `C:\Users\...\agy\bin\agy-auto.bat` |
-| **2. Configuration persistante** | `settings.json` mis à jour | Automatique pour toutes les sessions `agy` | Automatique pour toutes les sessions `agy` |
-| **3. Script Console Léger** | `auto_enter_cli.py` / `.sh` / `.bat` | `./lancer_auto_enter_cli.sh` | Double-clic sur `Lancer_Auto_Enter_CLI.bat` |
-| **4. Application Graphique Auto-Enter** | `auto_enter_app.py` / `.bat` | N/A (headless/serveur) | Double-clic sur `Lancer_Auto_Enter_GUI.bat` |
+Deux options ultra-rapides pour rendre le script 100% opérationnel :
 
----
-
-## 1. Utiliser directement la commande globale `agy-auto`
-
-La commande globale a été configurée dans votre PATH (`~/.local/bin/agy-auto` sur Linux ou dans l'équivalent Windows).
-
-Désormais, depuis **n'importe quel terminal** :
+### Option 1 : En 1 seule commande (Recommandé)
+Pas besoin de cloner manuellement le repo. Ouvrez votre terminal et exécutez :
 
 ```bash
-# Au lieu de faire : agy
+curl -fsSL https://raw.githubusercontent.com/LOLMANREX/antigravity-auto/main/install.sh | bash
+```
+
+### Option 2 : En 2/3 commandes (via Git)
+Si vous préférez cloner le dépôt :
+
+```bash
+git clone https://github.com/LOLMANREX/antigravity-auto.git
+cd antigravity-auto
+./install.sh
+```
+
+*(Ou `./setup_linux.sh`)*
+
+---
+
+### 💡 Que fait l'installation automatique ?
+1. **Vérifie et installe Antigravity CLI (`agy`)** si absent.
+2. **Installe les commandes globales** dans `~/.local/bin/` :
+   - `agy-auto` : Lance Antigravity CLI sans aucune demande de permission.
+   - `agy-yolo` : Raccourci équivalent à `agy-auto`.
+   - `agy-enter` : Lance le script d'appui automatique sur la touche Entrée depuis n'importe quel dossier.
+3. **Configure `settings.json`** de façon permanente :
+   - Active `toolPermission: "always-proceed"`.
+   - Active `artifactReviewPolicy: "always-proceed"`.
+   - Ajoute votre répertoire utilisateur à `trustedWorkspaces` (aucun avertissement de workspace).
+4. **Configure votre shell** (`.bashrc` et `.zshrc`) pour intégrer `~/.local/bin` au `PATH` et créer les alias.
+
+> [!NOTE]
+> Après l'installation, tapez `source ~/.bashrc` (ou rouvrez votre terminal) pour recharger immédiatement vos alias.
+
+---
+
+## 🚀 Utilisation au quotidien
+
+### 1. Mode Sans Permission Direct (Recommandé)
+Depuis **n'importe quel terminal et n'importe quel dossier** :
+
+```bash
+# Lancement direct sans aucune demande de permission
 agy-auto
 
-# Ou version courte :
+# Ou version rapide :
 agy-yolo
 ```
 
-Toutes les options habituelles sont supportées :
+Toutes les options habituelles de `agy` sont supportées :
 ```bash
 agy-auto -c
 agy-auto --model "gemini-2.5-pro"
 ```
 
-Cette commande démarre Antigravity avec le flag officiel `--dangerously-skip-permissions`, qui auto-approuve directement toutes les exécutions d'outils et commandes sans interruption.
-
----
-
-## 2. Configuration permanente (`settings.json`)
-
-Votre fichier de configuration globale `~/.gemini/antigravity-cli/settings.json` a été configuré avec :
-
-```json
-{
-  "trustedWorkspaces": [
-    "/home/louis"
-  ],
-  "toolPermission": "always-proceed",
-  "artifactReviewPolicy": "always-proceed"
-}
-```
-
-Cela indique au moteur Antigravity d'exécuter directement les outils et passer outre les demandes de validation manuelle pour vos sessions standards.
-
----
-
-## 3. Scripts de lancement rapide dans ce dossier
-
-### Sur Linux :
-- **`./setup_linux.sh`** : Réinstalle ou vérifie l'installation des commandes globales et des alias.
-- **`./lancer_agy_sans_permissions.sh`** : Lance Antigravity CLI directement en mode sans permissions.
-- **`./lancer_auto_enter_cli.sh`** : Lance le script console Auto-Enter.
-
-### Sur Windows :
-- **`Lancer_Agy_Sans_Permissions.bat`** : Lance le CLI en mode sans permissions.
-- **`Lancer_Auto_Enter_CLI.bat`** : Lance l'auto-enter en mode console.
-- **`Lancer_Auto_Enter_GUI.bat`** : Ouvre l'interface graphique Tkinter avec le raccourci F8.
-
----
-
-## 4. Script Console Headless (`auto_enter_cli.py`)
-
-Pour simuler automatiquement des appuis sur Entrée dans une session existante :
+### 2. Simulation de la Touche Entrée (`agy-enter`)
+Si vous préférez simuler automatiquement des appuis sur [Entrée] (par exemple si un prompt interactif attend une touche) :
 
 ```bash
-python3 auto_enter_cli.py --interval 1.0 --delay 3
+# Accessible partout en ligne de commande :
+agy-enter
+
+# Avec options personnalisées :
+agy-enter --interval 0.5 --delay 3
 ```
 
-### Options en ligne de commande :
-- `--interval` (`-i`) : Intervalle en secondes (défaut: 1.0)
-- `--delay` (`-d`) : Compte à rebours avant démarrage (défaut: 3 secondes)
-- `--count` (`-c`) : Nombre maximum d'appuis (0 = continu)
-- `--all-windows` : Désactive le filtre de fenêtre
-- Arrêt : `Ctrl + C` (ou touche `[F8]` sous Windows pour Pause/Reprise)
+*(Sous Linux, nécessite `xdotool` : `sudo apt install -y xdotool`)*
+
+---
+
+## 🪟 Utilisation sous Windows
+
+Sur Windows, double-cliquez simplement sur l'un des fichiers `.bat` :
+- `Lancer_Agy_Sans_Permissions.bat` : Démarre le CLI avec auto-approbation.
+- `Lancer_Auto_Enter_CLI.bat` : Lance le script auto-enter dans la console.
+- `Lancer_Auto_Enter_GUI.bat` : Ouvre la petite interface graphique Tkinter (avec raccourci F8 pour Pause/Reprise).
+
+---
+
+## 🗑️ Désinstallation propre (Linux)
+
+Pour retirer les commandes et restaurer vos alias :
+```bash
+agy-auto-uninstall
+```
