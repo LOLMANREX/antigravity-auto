@@ -79,12 +79,25 @@ agy-enter --interval 0.5 --delay 3
 
 ---
 
-## 🪟 Utilisation sous Windows
+## 🪟 Installation & Utilisation sous Windows (Sans commande)
 
-Sur Windows, double-cliquez simplement sur l'un des fichiers `.bat` :
-- `Lancer_Agy_Sans_Permissions.bat` : Démarre le CLI avec auto-approbation.
-- `Lancer_Auto_Enter_CLI.bat` : Lance le script auto-enter dans la console.
-- `Lancer_Auto_Enter_GUI.bat` : Ouvre la petite interface graphique Tkinter (avec raccourci F8 pour Pause/Reprise).
+Sur Windows, aucune ligne de commande n'est nécessaire :
+
+### 1. Installation 1-Clic
+Double-cliquez simplement sur :
+- **`Setup.exe`** : Installateur graphique Windows officiel autonome.
+*(Ou sur **`Setup_Windows.bat`** si vous préférez exécuter le script batch).*
+
+L'installateur :
+1. Crée les commandes globales `agy-auto.bat` et `agy-yolo.bat` dans votre dossier local (`%LOCALAPPDATA%\agy\bin`).
+2. Ajoute automatiquement ce dossier à votre variable d'environnement `PATH` Windows.
+3. Configure `settings.json` avec `toolPermission: always-proceed` et ajoute votre dossier utilisateur dans `trustedWorkspaces`.
+4. Crée un raccourci direct sur votre Bureau.
+
+### 2. Lanceurs rapides
+- **`Lancer_Agy_Sans_Permissions.bat`** : Démarre le CLI avec auto-approbation.
+- **`Lancer_Auto_Enter_CLI.bat`** : Lance le script auto-enter dans la console.
+- **`Lancer_Auto_Enter_GUI.bat`** : Ouvre la petite interface graphique Tkinter (avec raccourci F8 pour Pause/Reprise).
 
 ---
 
