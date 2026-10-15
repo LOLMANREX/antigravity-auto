@@ -13,20 +13,38 @@ import sys
 import time
 import threading
 import subprocess
-import tkinter as tk
-from tkinter import ttk, messagebox
-import ctypes
-from ctypes import wintypes
+IS_WINDOWS = sys.platform == "win32"
 
-# Windows API Constants & Functions
-user32 = ctypes.windll.user32
-kernel32 = ctypes.windll.kernel32
+if IS_WINDOWS:
+    import tkinter as tk
+    from tkinter import ttk, messagebox
+    import ctypes
+    from ctypes import wintypes
 
-VK_RETURN = 0x0D
-VK_F8 = 0x77
-KEYEVENTF_KEYUP = 0x0002
+    # Windows API Constants & Functions
+    user32 = ctypes.windll.user32
+    kernel32 = ctypes.windll.kernel32
 
-WNDENUMPROC = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+    VK_RETURN = 0x0D
+    VK_F8 = 0x77
+    KEYEVENTF_KEYUP = 0x0002
+
+    WNDENUMPROC = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+else:
+    user32 = None
+    kernel32 = None
+    try:
+        import tkinter as tk
+        from tkinter import ttk, messagebox
+    except ImportError:
+        class _DummyTkModule:
+            class Tk:
+                pass
+        tk = _DummyTkModule()
+        ttk = None
+        messagebox = None
+
+
 
 
 def press_enter_key():
@@ -440,5 +458,13 @@ class AutoEnterApp(tk.Tk):
 
 
 if __name__ == "__main__":
+    if not IS_WINDOWS or tk is None:
+        print("[INFO] L'application graphique 'auto_enter_app.py' nécessite Windows avec Tkinter.")
+        print("       Sur Linux, utilisez directement la commande globale :")
+        print("       $ agy-auto")
+        print("       ou le script console :")
+        print("       $ python3 auto_enter_cli.py")
+        sys.exit(0)
     app = AutoEnterApp()
     app.mainloop()
+

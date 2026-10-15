@@ -1,31 +1,31 @@
 # Antigravity CLI - Automatisation Totale des Permissions & Touche Entrée
 
-Ce dossier contient tous les outils et scripts permettant à l'agent Antigravity CLI (`agy`) d'exécuter l'ensemble de ses commandes et outils **sans demander de permission manuelle** ou en **validant automatiquement par la touche Entrée**.
+Ce dossier contient tous les outils et scripts permettant à l'agent Antigravity CLI (`agy`) d'exécuter l'ensemble de ses commandes et outils **sans demander de permission manuelle** ou en **validant automatiquement par la touche Entrée**. Compatible **Linux** et **Windows**.
 
 ---
 
 ## 🚀 Résumé des solutions disponibles
 
-| Solution | Méthode | Utilisation |
-| :--- | :--- | :--- |
-| **1. Commande directe globale** | Commande `agy-auto` / `agy-yolo` | Taper `agy-auto` dans n'importe quel terminal |
-| **2. Configuration persistante** | `settings.json` mis à jour | Automatique pour toutes les sessions `agy` |
-| **3. Application Graphique Auto-Enter** | `Lancer_Auto_Enter_GUI.bat` | Double-cliquer pour ouvrir l'interface avec bouton Marche/Arrêt et raccourci **[F8]** |
-| **4. Script Console Léger** | `Lancer_Auto_Enter_CLI.bat` | Double-cliquer ou exécuter `python auto_enter_cli.py` |
+| Solution | Méthode | Linux | Windows |
+| :--- | :--- | :--- | :--- |
+| **1. Commande directe globale** | Commande `agy-auto` / `agy-yolo` | `~/.local/bin/agy-auto` ou alias bash | `C:\Users\...\agy\bin\agy-auto.bat` |
+| **2. Configuration persistante** | `settings.json` mis à jour | Automatique pour toutes les sessions `agy` | Automatique pour toutes les sessions `agy` |
+| **3. Script Console Léger** | `auto_enter_cli.py` / `.sh` / `.bat` | `./lancer_auto_enter_cli.sh` | Double-clic sur `Lancer_Auto_Enter_CLI.bat` |
+| **4. Application Graphique Auto-Enter** | `auto_enter_app.py` / `.bat` | N/A (headless/serveur) | Double-clic sur `Lancer_Auto_Enter_GUI.bat` |
 
 ---
 
-## 1. Utiliser directement la nouvelle commande `agy-auto`
+## 1. Utiliser directement la commande globale `agy-auto`
 
-Un alias global a été installé dans votre dossier PATH (`C:\Users\X\AppData\Local\agy\bin`).
+La commande globale a été configurée dans votre PATH (`~/.local/bin/agy-auto` sur Linux ou dans l'équivalent Windows).
 
-Désormais, depuis **n'importe quel terminal** (PowerShell, CMD, Windows Terminal) :
+Désormais, depuis **n'importe quel terminal** :
 
 ```bash
 # Au lieu de faire : agy
 agy-auto
 
-# Ou version raccourcie :
+# Ou version courte :
 agy-yolo
 ```
 
@@ -35,57 +35,53 @@ agy-auto -c
 agy-auto --model "gemini-2.5-pro"
 ```
 
-Cette commande démarre Antigravity avec le flag officiel `--dangerously-skip-permissions`, qui auto-approuve directement toutes les exécutions de commandes et modifications de fichiers sans jamais vous solliciter.
+Cette commande démarre Antigravity avec le flag officiel `--dangerously-skip-permissions`, qui auto-approuve directement toutes les exécutions d'outils et commandes sans interruption.
 
 ---
 
 ## 2. Configuration permanente (`settings.json`)
 
-Votre fichier de configuration globale `~/.gemini/antigravity-cli/settings.json` a été mis à jour avec :
+Votre fichier de configuration globale `~/.gemini/antigravity-cli/settings.json` a été configuré avec :
 
 ```json
 {
+  "trustedWorkspaces": [
+    "/home/louis"
+  ],
   "toolPermission": "always-proceed",
   "artifactReviewPolicy": "always-proceed"
 }
 ```
 
-Cela indique au moteur d'Antigravity de passer outre la demande de revue manuelle et d'exécuter directement les outils.
+Cela indique au moteur Antigravity d'exécuter directement les outils et passer outre les demandes de validation manuelle pour vos sessions standards.
 
 ---
 
-## 3. Application Graphique "Auto-Enter Bot" (Tkinter)
+## 3. Scripts de lancement rapide dans ce dossier
 
-Si vous utilisez une session interactive déjà ouverte ou une interface qui attend que vous appuyiez sur la touche **Entrée** :
+### Sur Linux :
+- **`./setup_linux.sh`** : Réinstalle ou vérifie l'installation des commandes globales et des alias.
+- **`./lancer_agy_sans_permissions.sh`** : Lance Antigravity CLI directement en mode sans permissions.
+- **`./lancer_auto_enter_cli.sh`** : Lance le script console Auto-Enter.
 
-### Lancement
-- Double-cliquez sur : **`Lancer_Auto_Enter_GUI.bat`**
-- Ou en ligne de commande : `python auto_enter_app.py`
-
-### Fonctionnalités
-- **Raccourci Global [F8]** : Démarrez ou mettez en pause l'appui automatique à tout moment, même depuis votre terminal !
-- **Filtre de détection de terminal** : N'envoie la touche Entrée que si la fenêtre active est un terminal (`agy`, `PowerShell`, `CMD`, `Windows Terminal`).
-- **Intervalle réglable** : Choisissez le délai entre chaque appui (ex: 1 seconde).
-- **Délai initial** : Compte à rebours au lancement (ex: 2s) pour vous laisser le temps de basculer sur la fenêtre souhaitée.
-- **Always on Top** : La fenêtre reste au-dessus pour surveiller le statut et les compteurs en direct.
-- **Bouton ⚡ Ouvrir agy-auto** : Lance un terminal propre directement en mode sans permissions.
+### Sur Windows :
+- **`Lancer_Agy_Sans_Permissions.bat`** : Lance le CLI en mode sans permissions.
+- **`Lancer_Auto_Enter_CLI.bat`** : Lance l'auto-enter en mode console.
+- **`Lancer_Auto_Enter_GUI.bat`** : Ouvre l'interface graphique Tkinter avec le raccourci F8.
 
 ---
 
 ## 4. Script Console Headless (`auto_enter_cli.py`)
 
-Pour ceux qui préfèrent une invite de commande légère sans interface graphique :
+Pour simuler automatiquement des appuis sur Entrée dans une session existante :
 
-### Lancement
-- Double-cliquez sur : **`Lancer_Auto_Enter_CLI.bat`**
-- Ou lancez manuellement :
-  ```bash
-  python auto_enter_cli.py --interval 1.0 --delay 3
-  ```
+```bash
+python3 auto_enter_cli.py --interval 1.0 --delay 3
+```
 
-### Options en ligne de commande
+### Options en ligne de commande :
 - `--interval` (`-i`) : Intervalle en secondes (défaut: 1.0)
 - `--delay` (`-d`) : Compte à rebours avant démarrage (défaut: 3 secondes)
 - `--count` (`-c`) : Nombre maximum d'appuis (0 = continu)
-- `--all-windows` : Désactive le filtre et appuie quelle que soit la fenêtre active
-- Raccourci : Touche **[F8]** pour Mettre en pause / Reprendre, **[Ctrl+C]** pour quitter.
+- `--all-windows` : Désactive le filtre de fenêtre
+- Arrêt : `Ctrl + C` (ou touche `[F8]` sous Windows pour Pause/Reprise)
